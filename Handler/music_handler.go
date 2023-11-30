@@ -4,6 +4,7 @@ import (
 	"github.com/ikediufomadu/Go_Spotify_Script/Music"
 	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Search"
 	"github.com/zmb3/spotify/v2"
+	"time"
 )
 
 var (
@@ -35,9 +36,12 @@ func GetSongGenreSlice() []string {
 func WhichQuery(selection int) {
 	switch selection {
 	case 1:
-		for _, songName := range GetSongNameSlice() {
-			nameQuery := Search.NewSongNameQuery(songName, spotify.SearchType(spotify.SearchTypeTrack))
+		for i, songName := range GetSongNameSlice() {
+			artistName := songArtist[i]
+			nameQuery := Search.NewSongNameQuery(songName, artistName, spotify.SearchType(spotify.SearchTypeTrack))
 			nameQuery.QuerySpotify()
+
+			time.Sleep(3 * time.Second)
 		}
 	case 2:
 		for _, artistName := range GetSongArtistSlice() {

@@ -13,7 +13,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	scraper := "https://pitchfork.com/reviews/best/tracks/?page=1"
+	scraper := "https://pitchfork.com/reviews/best/tracks/?page=2"
 
 	Authenticator.StartLocalServer()
 	Handler.WebConnector(scraper)

@@ -15,6 +15,7 @@ type Query interface {
 
 type SongNameQuery struct {
 	songName   string
+	artistName string
 	searchType spotify.SearchType
 }
 
@@ -28,9 +29,10 @@ type GenreQuery struct {
 	searchType spotify.SearchType
 }
 
-func NewSongNameQuery(songName string, searchType spotify.SearchType) *SongNameQuery {
+func NewSongNameQuery(songName string, artistName string, searchType spotify.SearchType) *SongNameQuery {
 	return &SongNameQuery{
 		songName:   songName,
+		artistName: artistName,
 		searchType: searchType,
 	}
 }
@@ -50,21 +52,24 @@ func NewGenreQuery(genre string, searchType spotify.SearchType) *GenreQuery {
 }
 
 func (snq SongNameQuery) QuerySpotify() {
-	client, err := Authenticator.GetClient()
-	if err != nil {
-		log.Fatal("Client is nil", err)
+	client, clientError := Authenticator.GetClient()
+	if clientError != nil {
+		log.Fatal("Client is nil", clientError)
 	}
 
-	search, err := client.Search(context.Background(), snq.songName, snq.searchType)
-	if err != nil {
-		log.Fatal("There was an error querying this song. ", err)
+	query := fmt.Sprintf("%s artist %s", snq.songName, snq.artistName)
+
+	search, searchError := client.Search(context.Background(), query, snq.searchType)
+	if searchError != nil {
+		log.Fatal("There was an error querying this song. ", searchError)
 	}
 
-	for _, track := range search.Tracks.Tracks {
-
-		Playlist.AddTrackToPlaylist(track.ID)
+	if len(search.Tracks.Tracks) > 0 {
+		firstTrack := search.Tracks.Tracks[0].ID
+		Playlist.AddTrackToPlaylist(firstTrack)
+	} else {
+		log.Println("No tracks found for the given query.\n", query)
 	}
-
 }
 
 func (anq ArtistNameQuery) QuerySpotify() {
