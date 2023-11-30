@@ -13,11 +13,39 @@ var (
 	songGenre  []string
 )
 
+// Appends music data to the global slices
 func storeMusicData(musicData []Music.Music) {
 	for _, music := range musicData {
 		songName = append(songName, music.GetSongName())
 		songArtist = append(songArtist, music.GetArtist())
 		songGenre = append(songGenre, music.GetGenre())
+	}
+}
+
+// WhichQuery performs Spotify queries based on user selection
+func WhichQuery(selection int) {
+	switch selection {
+	case 1:
+		// Search for each song by name and artist
+		for i, songName := range GetSongNameSlice() {
+			artistName := songArtist[i]
+			nameQuery := Search.NewSongNameQuery(songName, artistName, spotify.SearchType(spotify.SearchTypeTrack))
+			nameQuery.QuerySpotify()
+
+			time.Sleep(3 * time.Second)
+		}
+	case 2:
+		// Search for each artist
+		for _, artistName := range GetSongArtistSlice() {
+			artistQuery := Search.NewArtistNameQuery(artistName, spotify.SearchType(spotify.SearchTypeArtist))
+			artistQuery.QuerySpotify()
+		}
+	case 3:
+		// Search for each genre
+		for _, genreType := range GetSongGenreSlice() {
+			genreQuery := Search.NewGenreQuery(genreType, spotify.SearchType(spotify.SearchTypePlaylist))
+			genreQuery.QuerySpotify()
+		}
 	}
 }
 
@@ -31,27 +59,4 @@ func GetSongArtistSlice() []string {
 
 func GetSongGenreSlice() []string {
 	return songGenre
-}
-
-func WhichQuery(selection int) {
-	switch selection {
-	case 1:
-		for i, songName := range GetSongNameSlice() {
-			artistName := songArtist[i]
-			nameQuery := Search.NewSongNameQuery(songName, artistName, spotify.SearchType(spotify.SearchTypeTrack))
-			nameQuery.QuerySpotify()
-
-			time.Sleep(3 * time.Second)
-		}
-	case 2:
-		for _, artistName := range GetSongArtistSlice() {
-			artistQuery := Search.NewArtistNameQuery(artistName, spotify.SearchType(spotify.SearchTypeArtist))
-			artistQuery.QuerySpotify()
-		}
-	case 3:
-		for _, genreType := range GetSongGenreSlice() {
-			genreQuery := Search.NewGenreQuery(genreType, spotify.SearchType(spotify.SearchTypePlaylist))
-			genreQuery.QuerySpotify()
-		}
-	}
 }

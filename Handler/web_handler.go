@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+// WebConnector initiates the web scraping process for the target website
 func WebConnector(targetWebsite string) {
 	err, website := webScrapper(targetWebsite)
 	if err != nil {
@@ -14,11 +15,16 @@ func WebConnector(targetWebsite string) {
 	}
 }
 
+// webScrapper performs web scraping on the provided website
 func webScrapper(website string) (error, string) {
 	c := colly.NewCollector()
 
 	var musicData []Music.Music
 
+	/*
+		Define the HTML elements to be scraped and extract music data.
+		This will need to be manually changed depending on the website user wants to data scrap.
+	*/
 	c.OnHTML("div.track-list div[class=track-collection-item__details]", func(e *colly.HTMLElement) {
 		music := Music.Music{
 			SongName:   e.ChildText("h2[class=track-collection-item__title]"),
@@ -41,6 +47,7 @@ func webScrapper(website string) (error, string) {
 		return err, website
 	}
 
+	// Store the scraped music data to be filtered
 	storeMusicData(musicData)
 
 	return nil, website

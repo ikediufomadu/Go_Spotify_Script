@@ -9,6 +9,7 @@ import (
 	"log"
 )
 
+// Query is an interface representing a generic Spotify search query
 type Query interface {
 	QuerySpotify()
 }
@@ -29,14 +30,21 @@ type GenreQuery struct {
 	searchType spotify.SearchType
 }
 
-func NewSongNameQuery(songName string, artistName string, searchType spotify.SearchType) *SongNameQuery {
+// NewSongNameQuery creates a new SongNameQuery instance
+func NewSongNameQuery(songName string, searchType spotify.SearchType, artistName ...string) *SongNameQuery {
+	var artist string
+	if len(artistName) > 0 {
+		artist = artistName[0]
+	}
+
 	return &SongNameQuery{
 		songName:   songName,
-		artistName: artistName,
+		artistName: artist,
 		searchType: searchType,
 	}
 }
 
+// NewArtistNameQuery creates a new ArtistNameQuery instance
 func NewArtistNameQuery(artistName string, searchType spotify.SearchType) *ArtistNameQuery {
 	return &ArtistNameQuery{
 		artistName: artistName,
@@ -44,6 +52,7 @@ func NewArtistNameQuery(artistName string, searchType spotify.SearchType) *Artis
 	}
 }
 
+// NewGenreQuery creates a new GenreQuery instance
 func NewGenreQuery(genre string, searchType spotify.SearchType) *GenreQuery {
 	return &GenreQuery{
 		genre:      genre,
@@ -51,19 +60,23 @@ func NewGenreQuery(genre string, searchType spotify.SearchType) *GenreQuery {
 	}
 }
 
+// QuerySpotify performs a Spotify search based on the SongNameQuery
 func (snq SongNameQuery) QuerySpotify() {
 	client, clientError := Authenticator.GetClient()
 	if clientError != nil {
 		log.Fatal("Client is nil", clientError)
 	}
 
+	// Formulate the search query
 	query := fmt.Sprintf("%s artist %s", snq.songName, snq.artistName)
 
+	// Perform the search
 	search, searchError := client.Search(context.Background(), query, snq.searchType)
 	if searchError != nil {
 		log.Fatal("There was an error querying this song. ", searchError)
 	}
 
+	// If tracks are found, add the first track to the playlist
 	if len(search.Tracks.Tracks) > 0 {
 		firstTrack := search.Tracks.Tracks[0].ID
 		Playlist.AddTrackToPlaylist(firstTrack)
@@ -72,6 +85,7 @@ func (snq SongNameQuery) QuerySpotify() {
 	}
 }
 
+// QuerySpotify performs a Spotify search based on the ArtistNameQuery
 func (anq ArtistNameQuery) QuerySpotify() {
 	client, err := Authenticator.GetClient()
 	if err != nil {
@@ -84,6 +98,7 @@ func (anq ArtistNameQuery) QuerySpotify() {
 	fmt.Print(search.Artists)
 }
 
+// QuerySpotify performs a Spotify search based on the GenreQuery
 func (gq GenreQuery) QuerySpotify() {
 	client, err := Authenticator.GetClient()
 	if err != nil {

@@ -1,5 +1,6 @@
 package Music
 
+// Music represents a structure for storing information about a piece of music
 type Music struct {
 	SongName   string `json:"song_name"`
 	Delimiter  string

@@ -12,15 +12,14 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-// redirectURI is the OAuth redirect URI for the application.
-// You must register an application at Spotify's developer portal
-// and enter this value.
+// Loads environment variables from a .env file
 var (
 	loadVars     = godotenv.Load()
 	clientID     = os.Getenv("CLIENT_ID")
 	clientSecret = os.Getenv("CLIENT_SECRET")
 )
 
+// Spotify's authentication configuration
 var (
 	auth = spotifyauth.New(
 		spotifyauth.WithRedirectURL(redirectURI),
@@ -33,11 +32,13 @@ var (
 	userID         string
 )
 
+// OAuth constants
 const (
 	state       = "abc123"
 	redirectURI = "http://localhost:8080/callback"
 )
 
+// StartLocalServer starts a local HTTP server for Spotify authentication
 func StartLocalServer() {
 	// first start an HTTP server
 	http.HandleFunc("/callback", completeAuth)
@@ -51,12 +52,14 @@ func StartLocalServer() {
 		}
 	}()
 
+	// Initiate the Spotify login process
 	loginErr := loginUser()
 	if loginErr != nil {
 		os.Exit(1)
 	}
 }
 
+// Initiates the Spotify login process
 func loginUser() error {
 	if clientID == "" || clientSecret == "" {
 		return fmt.Errorf("CLIENT_ID or CLIENT_SECRET is not set in the environment")
@@ -68,7 +71,7 @@ func loginUser() error {
 	// wait for auth to complete
 	client := <-ch
 	setClient(client)
-	// use the client to make calls that require authorization
+
 	User, err := client.CurrentUser(context.Background())
 	if err != nil {
 		log.Fatal(err)
@@ -79,12 +82,14 @@ func loginUser() error {
 	return nil
 }
 
+// Handles the callback from the Spotify authentication process
 func completeAuth(w http.ResponseWriter, r *http.Request) {
 	tok, err := auth.Token(r.Context(), state, r)
 	if err != nil {
 		http.Error(w, "Couldn't get token", http.StatusForbidden)
 		log.Fatal(err)
 	}
+
 	if st := r.FormValue("state"); st != state {
 		http.NotFound(w, r)
 		log.Fatalf("State mismatch: %s != %s\n", st, state)
