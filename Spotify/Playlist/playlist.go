@@ -6,6 +6,7 @@ import (
 	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Authenticator"
 	"github.com/zmb3/spotify/v2"
 	"log"
+	"strings"
 )
 
 // CreatePlaylist creates a new Spotify playlist for the authenticated user
@@ -27,15 +28,18 @@ func CreatePlaylist(playlistName, playlistDescription string, public, collaborat
 }
 
 // AddTrackToPlaylist adds a track to the authenticated user's Spotify playlist
-func AddTrackToPlaylist(track spotify.ID) {
+func AddTrackToPlaylist(track spotify.ID, playlistName string) {
 	client, clientError := Authenticator.GetClient()
 	isClientNull(clientError)
 
-	fullPlaylist := getPlaylist()
-	//TODO MAKE THE SEARCH MORE ACCURATE
-	_, playlistError := client.AddTracksToPlaylist(context.Background(), fullPlaylist.ID, track)
+	userPlaylist, getPlaylistError := getPlaylist(playlistName)
+	if getPlaylistError != nil || userPlaylist == nil {
+		log.Fatal("Playlist does not exist.")
+	}
+
+	_, playlistError := client.AddTracksToPlaylist(context.Background(), userPlaylist.ID, track)
 	if playlistError != nil {
-		fmt.Printf("There was a problem adding this song to the playlist %s: %v\n", fullPlaylist.Name, playlistError)
+		fmt.Printf("There was a problem adding this song to the playlist %s: %v\n", userPlaylist.Name, playlistError)
 	} else {
 		fmt.Printf("Song added to playlist.\n")
 	}
@@ -50,17 +54,32 @@ func DeleteTrack() {
 }
 
 // TODO get rid of hardcoded playlistID find a way to allow user to pick playlist
-func getPlaylist() *spotify.FullPlaylist {
+func getPlaylist(playlistName string) (*spotify.FullPlaylist, error) {
 	client, clientError := Authenticator.GetClient()
 	isClientNull(clientError)
 
-	// Right now you will have to create a playlist then grab the playlist ID from your CLI, add that ID here.
-	playlist, playlistErr := client.GetPlaylist(context.Background(), "42AIIsWQ4AhF5liJkuenJY")
-	if playlistErr != nil {
-		log.Fatal("Error grabbing playlist")
+	userID, userIDError := Authenticator.GetUserID()
+	if userIDError != nil {
+		return nil, userIDError
 	}
 
-	return playlist
+	// Get all playlists for the user
+	playlists, playlistsError := client.GetPlaylistsForUser(context.Background(), userID)
+	if playlistsError != nil {
+		return nil, playlistsError
+	}
+
+	// Find the playlist by name
+	for _, playlist := range playlists.Playlists {
+
+		if strings.ToLower(playlist.Name) == strings.ToLower(playlistName) && playlist.Owner.ID == userID {
+			// Found the playlist by name
+			return client.GetPlaylist(context.Background(), playlist.ID)
+		}
+	}
+
+	// Playlist not found
+	return nil, playlistsError
 }
 
 // isClientNull checks if the Spotify client is nil and logs a fatal error if so
