@@ -1,42 +1,32 @@
 # Go Spotify Script
-## _Overview_
+## Overview
 This Go program leverages the Spotify API to interact with user playlists. It includes functionalities for authenticating with Spotify, web scraping music data, manipulating an authorized user's public and private playlists, and performing specific queries on the Spotify platform.
 ## Prerequisites
 Before running the program, ensure you have the following:
 - Go installed on your machine.
 - A Spotify Developer account to obtain your client ID and client secret.
-- You must have this as your Redirect URI http://localhost:8080/callback
+- You must have this link as your Redirect URI: http://localhost:8080/callback
 
 ## Setup
 
-- Clone the repository: 
-    - git clone https://github.com/ikediufomadu/Go_Spotify_Script.git
-- Move to the folder location
-    -  cd Go_Spotify_Script
--  Create a .env file in the root directory and add your Spotify client ID and client secret:
+- Clone the repository
+- Create a .env file in the root directory and add your Spotify client ID and client secret:
     -  CLIENT_ID = your_spotify_client_id
     -  CLIENT_SECRET = your_spotify_client_secret
+- Define the target website in the main.go file: targetWebsite := "https://example.com".
+- Replace "https://example.com" with the website you want to scrape music data from.
+- Note that you will have to manually change the html elements the program will search for if you choose a new website.
+    - You can change this in the web_handler.go file look for the webScrapper method.
+- Pick which playlist you want to add music to. You can do that by changing the second parameter of the AddTrackToPlaylist() method in the search.go file.
+  - The playlist name is NOT case-sensitive.
+- Choose a query type by updating the GenreQuery method parameter in main.go: GenreQuery("rock")
+  - Replace 'rock' with the desired query type you can check the supported types in query.go the WhichQuery method.
 ## Usage
-- Web Scraping
-    - Define the target website in the main.go file:
-    - targetWebsite := "https://example.com"
-    - Replace "https://example.com" with the website you want to scrape music data from.
-- Authentication
-    - Run the program to start a local server for Spotify authentication. It is set to run on port 8080, you can change this if needed.
-        - **If you want to change the starting port you will have to change the the redirect URI on the spotify dashboard. localhost:8080/callback and also in the redirectURI in the authenticator.go file**
-    - Visit the provided authentication URL in your browser to log in to your Spotify account.
-- Query Spotify
-   - Choose a query type by updating the which query function parameter in main.go: 
-    - Handler.WhichQuery(1)
-    - Replace 1 with the desired query type (1 for song name query, 2 for artist name query, 3 for genre query).
-- Run the Program
-    - Run the program to scrape data, authenticate, and perform the specified query:
 
-## Technicalities
-- Playlist ID
-    - As of 11/30/2023 you will have to create a new playlist, get the string from the CLI and then manually input it into the getPlaylist method in the playlist.go file.
-- Changing server port
-    - As stated before in the Authentication section of usage, if you want to change the  port number in authenticator.go file you will also need to change the callback URI's port number in the Spotify dashboard and also in the constant redirectURI in the authenticator.go file as well.
+1. Spotify User Authentication - The program will then start a local server and output a Spotify authentication URL. Paste the string into your browser to log in to your Spotify account and authorize the program.
+2. Web Scraping - Then it will visit the site to collect music data from.
+3. Search - It then searches for the track data it collected from the music website of your choice.
+4. Add to Playlist - Finally, it will add the first result to a playlist of your choice then it will stop execution.
 
 ## License
 

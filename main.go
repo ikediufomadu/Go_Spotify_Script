@@ -17,6 +17,5 @@ func main() {
 	Handler.WebConnector(scraper)
 
 	// Perform a specific Spotify query based on user selection
-	Query.WhichQuery("rock")
-	//Playlist.CreatePlaylist("Rock Playlist", "", true, false)
+	Query.GenreQuery("rock")
 }

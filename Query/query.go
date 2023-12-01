@@ -8,8 +8,8 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-// WhichQuery performs Spotify queries based on user selection
-func WhichQuery(selection string) {
+// GenreQuery performs Spotify queries based on user selection
+func GenreQuery(selection string) {
 	switch selection {
 	case "rap":
 		loopMusicGenre("rap", Music.Rap)
@@ -25,6 +25,8 @@ func WhichQuery(selection string) {
 		loopMusicGenre("pop", Music.Pop)
 	case "electronic":
 		loopMusicGenre("electronic", Music.Electronic)
+	default:
+		fmt.Println("Unsupported genre:", selection)
 	}
 }
 

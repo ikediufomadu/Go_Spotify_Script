@@ -53,7 +53,7 @@ func (tq TrackQuery) QuerySpotify() error {
 		firstTrack := tracks[0].ID
 		// Change the playlist name to your own
 		// Make sure the playlist's name consists of regular unicode characters.
-		Playlist.AddTrackToPlaylist(firstTrack, "🤎")
+		Playlist.AddTrackToPlaylist(firstTrack, "rock playlist")
 	}
 
 	return nil
