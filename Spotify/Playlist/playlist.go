@@ -32,6 +32,7 @@ func AddTrackToPlaylist(track spotify.ID) {
 	isClientNull(clientError)
 
 	fullPlaylist := getPlaylist()
+	//TODO MAKE THE SEARCH MORE ACCURATE
 	_, playlistError := client.AddTracksToPlaylist(context.Background(), fullPlaylist.ID, track)
 	if playlistError != nil {
 		fmt.Printf("There was a problem adding this song to the playlist %s: %v\n", fullPlaylist.Name, playlistError)
@@ -48,12 +49,13 @@ func DeleteTrack() {
 
 }
 
+// TODO get rid of hardcoded playlistID find a way to allow user to pick playlist
 func getPlaylist() *spotify.FullPlaylist {
 	client, clientError := Authenticator.GetClient()
 	isClientNull(clientError)
 
 	// Right now you will have to create a playlist then grab the playlist ID from your CLI, add that ID here.
-	playlist, playlistErr := client.GetPlaylist(context.Background(), "6jQH6TbyhQrvb36ZBjLWQe")
+	playlist, playlistErr := client.GetPlaylist(context.Background(), "42AIIsWQ4AhF5liJkuenJY")
 	if playlistErr != nil {
 		log.Fatal("Error grabbing playlist")
 	}

@@ -48,7 +48,7 @@ func webScrapper(website string) (error, string) {
 	}
 
 	// Store the scraped music data to be filtered
-	storeMusicData(musicData)
+	Music.StoreMusicData(musicData)
 
 	return nil, website
 }
