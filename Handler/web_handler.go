@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/gocolly/colly/v2"
 	"github.com/ikediufomadu/Go_Spotify_Script/Music"
+	"github.com/ikediufomadu/Go_Spotify_Script/Query"
 	"log"
+	"strings"
 )
 
 // WebConnector initiates the web scraping process for the target website
@@ -21,21 +23,27 @@ func webScrapper(website string) (error, string) {
 
 	var musicData []Music.Music
 
-	/*
-		Define the HTML elements to be scraped and extract music data.
-		This will need to be manually changed depending on the website user wants to data scrap.
-	*/
-	c.OnHTML("div.track-list div[class=track-collection-item__details]", func(e *colly.HTMLElement) {
-		music := Music.Music{
-			SongName:   e.ChildText("h2[class=track-collection-item__title]"),
-			Delimiter:  "|",
-			Artist:     e.ChildText("ul[class=artist-list]"),
-			Delimiter2: "|",
-			Genre:      e.ChildText("[class=genre-list__link]"),
-			Delimiter3: "|",
-			Published:  e.ChildText("[class=pub-date]"),
-		}
-		musicData = append(musicData, music)
+	// Looks for the div that stores all the songs
+	c.OnHTML("div.o-chart-results-list-row-container", func(e *colly.HTMLElement) {
+		// Looks for the H3 element that has the class 'c-title'
+		e.ForEach("h3.c-title", func(_ int, h3 *colly.HTMLElement) {
+			// Grabs the parent element of the H3 element
+			parent := h3.DOM.Parent()
+			// Checks if the parent is the li element that contains the song name and artist name children elements.
+			if parent.Is("li.o-chart-results-list__item") {
+				// Formats retrieved data
+				songName := strings.TrimSpace(h3.Text)
+
+				// Gets the span element with the class 'c-label', this is where the artist name is stored.
+				artist := strings.TrimSpace(parent.Find("span.c-label").Text())
+
+				music := Music.Music{
+					SongName: songName,
+					Artist:   artist,
+				}
+				musicData = append(musicData, music)
+			}
+		})
 	})
 
 	c.OnRequest(func(r *colly.Request) {
@@ -47,8 +55,8 @@ func webScrapper(website string) (error, string) {
 		return err, website
 	}
 
-	// Store the scraped music data to be filtered
-	Music.StoreMusicData(musicData)
+	// Perform Spotify queries with the scraped music data
+	Query.ScrapedMusic(musicData)
 
 	return nil, website
 }

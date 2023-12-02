@@ -28,7 +28,7 @@ func CreatePlaylist(playlistName, playlistDescription string, public, collaborat
 }
 
 // AddTrackToPlaylist adds a track to the authenticated user's Spotify playlist
-func AddTrackToPlaylist(track spotify.ID, playlistName string) {
+func AddTrackToPlaylist(query string, track spotify.ID, playlistName string) {
 	client, clientError := Authenticator.GetClient()
 	isClientNull(clientError)
 
@@ -39,9 +39,9 @@ func AddTrackToPlaylist(track spotify.ID, playlistName string) {
 
 	_, playlistError := client.AddTracksToPlaylist(context.Background(), userPlaylist.ID, track)
 	if playlistError != nil {
-		fmt.Printf("There was a problem adding this song to the playlist %s: %v\n", userPlaylist.Name, playlistError)
+		fmt.Printf("There was a problem adding this track to the playlist. %s.\n %s: %s\n", query, userPlaylist.Name, playlistError)
 	} else {
-		fmt.Printf("Song added to playlist.\n")
+		fmt.Printf("%s added to playlist.\n", query)
 	}
 }
 
@@ -53,7 +53,6 @@ func DeleteTrack() {
 
 }
 
-// TODO get rid of hardcoded playlistID find a way to allow user to pick playlist
 func getPlaylist(playlistName string) (*spotify.FullPlaylist, error) {
 	client, clientError := Authenticator.GetClient()
 	isClientNull(clientError)

@@ -1,6 +1,7 @@
 # Go Spotify Script
 ## Overview
-This Go program leverages the Spotify API to interact with user playlists. It includes functionalities for authenticating with Spotify, web scraping music data, manipulating an authorized user's public and private playlists, and performing specific queries on the Spotify platform.
+This Go program leverages the Spotify API to add tracks to a user's playlist.
+
 ## Prerequisites
 Before running the program, ensure you have the following:
 - Go installed on your machine.
@@ -16,13 +17,7 @@ Before running the program, ensure you have the following:
     -  CLIENT_ID = your_spotify_client_id
     -  CLIENT_SECRET = your_spotify_client_secret
 - Define the target website in the main.go file: targetWebsite := "https://example.com".
-- Replace "https://example.com" with the website you want to scrape music data from.
-- Note that you will have to manually change the html elements the program will search for if you choose a new website.
-    - You can change this in the web_handler.go file look for the webScrapper method.
-- Pick which playlist you want to add music to. You can do that by changing the second parameter of the AddTrackToPlaylist() method in the search.go file.
-  - The playlist name is NOT case-sensitive.
-- Choose a query type by updating the GenreQuery method parameter in main.go: GenreQuery("rock")
-  - Replace 'rock' with the desired query type you can check the supported types in query.go the WhichQuery method.
+- This program works with any billboard endpoint https://www.billboard.com/charts/ except for the billboard artist 100 endpoint.
 ## Usage
 
 1. Spotify User Authentication - The program will then start a local server and output a Spotify authentication URL. Paste the string into your browser to log in to your Spotify account and authorize the program.
