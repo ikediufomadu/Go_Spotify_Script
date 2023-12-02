@@ -32,13 +32,10 @@ func NewTrackQuery(music Music.Music, searchType spotify.SearchType) (*TrackQuer
 
 // QuerySpotify performs a Spotify search based on the TrackQuery
 func (tq TrackQuery) QuerySpotify() error {
-	client, clientError := Authenticator.GetClient()
-	if clientError != nil {
-		log.Fatal("Client is nil", clientError)
-	}
+	client := Authenticator.GetClient()
 
 	// Formulate the search query
-	query := fmt.Sprintf("%s artist %s", tq.songName, tq.artistName)
+	query := fmt.Sprintf("%s %s", tq.songName, tq.artistName)
 
 	// Perform the search
 	search, searchError := client.Search(context.Background(), query, tq.searchType)
@@ -51,9 +48,7 @@ func (tq TrackQuery) QuerySpotify() error {
 	tracks := search.Tracks.Tracks
 	if len(tracks) > 0 {
 		firstTrack := tracks[0].ID
-		// Change the playlist name to your own
-		// Make sure the playlist's name consists of regular unicode characters.
-		Playlist.AddTrackToPlaylist(query, firstTrack, "test")
+		Playlist.AddTrackToPlaylist(query, firstTrack)
 	}
 
 	return nil

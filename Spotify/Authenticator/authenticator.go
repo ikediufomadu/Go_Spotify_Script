@@ -53,20 +53,17 @@ func StartLocalServer() {
 	}()
 
 	// Initiate the Spotify login process
-	loginErr := loginUser()
-	if loginErr != nil {
-		os.Exit(1)
-	}
+	loginUser()
 }
 
 // Initiates the Spotify login process
-func loginUser() error {
+func loginUser() {
 	if clientID == "" || clientSecret == "" {
-		return fmt.Errorf("CLIENT_ID or CLIENT_SECRET is not set in the environment")
+		log.Fatal("CLIENT_ID or CLIENT_SECRET is not set in the environment")
 	}
 
 	url := auth.AuthURL(state)
-	fmt.Println("Please log in to Spotify by visiting the following page in your browser:\n", url)
+	fmt.Println("Please log in to Spotify by visiting this link in your browser:\n", url)
 
 	// wait for auth to complete
 	client := <-ch
@@ -74,12 +71,10 @@ func loginUser() error {
 
 	User, err := client.CurrentUser(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not retrieve user data.\n", err)
 	}
 	setUserID(User.ID)
-	fmt.Println("You are logged in as:", User.ID)
-
-	return nil
+	fmt.Printf("You are logged in as: %s.\n", User.User.DisplayName)
 }
 
 // Handles the callback from the Spotify authentication process
@@ -105,14 +100,14 @@ func setClient(client *spotify.Client) {
 	searcherClient = client
 }
 
-func GetClient() (*spotify.Client, error) {
-	return searcherClient, nil
-}
-
 func setUserID(user string) {
 	userID = user
 }
 
-func GetUserID() (string, error) {
-	return userID, nil
+func GetClient() *spotify.Client {
+	return searcherClient
+}
+
+func GetUserID() string {
+	return userID
 }

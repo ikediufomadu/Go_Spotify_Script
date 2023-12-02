@@ -9,81 +9,69 @@ import (
 	"strings"
 )
 
-// CreatePlaylist creates a new Spotify playlist for the authenticated user
+var userPlaylist *spotify.FullPlaylist
+
+// CreatePlaylist creates a new Spotify playlist for the user
 func CreatePlaylist(playlistName, playlistDescription string, public, collaborative bool) {
-	client, clientError := Authenticator.GetClient()
-	isClientNull(clientError)
+	client := Authenticator.GetClient()
+	userID := Authenticator.GetUserID()
 
-	userID, userIDError := Authenticator.GetUserID()
-	if userIDError != nil {
-		log.Fatal("User is nil", userIDError)
-	}
-
-	playlist, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, playlistDescription, public, collaborative)
+	_, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, playlistDescription, public, collaborative)
 	if playlistError != nil {
 		fmt.Println("There was a problem creating your playlist.", playlistError)
-	} else {
-		fmt.Println(playlist.ID + "\n PUT THIS STRING INTO THE getPlaylist METHOD.\nplaylist, playlistErr := client.GetPlaylist(context.Background(), \"STRING HERE\")")
 	}
 }
 
 // AddTrackToPlaylist adds a track to the authenticated user's Spotify playlist
-func AddTrackToPlaylist(query string, track spotify.ID, playlistName string) {
-	client, clientError := Authenticator.GetClient()
-	isClientNull(clientError)
+func AddTrackToPlaylist(query string, track spotify.ID) {
+	client := Authenticator.GetClient()
 
-	userPlaylist, getPlaylistError := getPlaylist(playlistName)
-	if getPlaylistError != nil || userPlaylist == nil {
-		log.Fatal("Playlist does not exist.")
-	}
-
-	_, playlistError := client.AddTracksToPlaylist(context.Background(), userPlaylist.ID, track)
-	if playlistError != nil {
-		fmt.Printf("There was a problem adding this track to the playlist. %s.\n %s: %s\n", query, userPlaylist.Name, playlistError)
+	if checkDuplicates(track, userPlaylist) {
+		fmt.Printf("Found duplicate track '%s' in your playlist.\n", track.String())
 	} else {
-		fmt.Printf("%s added to playlist.\n", query)
+		_, playlistError := client.AddTracksToPlaylist(context.Background(), userPlaylist.ID, track)
+		if playlistError != nil {
+			fmt.Print("There was a problem adding a track to the playlist.")
+		} else {
+			fmt.Printf("%s added to playlist.\n", query)
+		}
 	}
 }
 
-func DeleteDuplicateTracks() {
-
-}
-
-func DeleteTrack() {
-
-}
-
-func getPlaylist(playlistName string) (*spotify.FullPlaylist, error) {
-	client, clientError := Authenticator.GetClient()
-	isClientNull(clientError)
-
-	userID, userIDError := Authenticator.GetUserID()
-	if userIDError != nil {
-		return nil, userIDError
+func checkDuplicates(trackID spotify.ID, userPlaylist *spotify.FullPlaylist) bool {
+	tracksInPlaylist := userPlaylist.Tracks.Tracks
+	for _, track := range tracksInPlaylist {
+		if track.Track.ID == trackID {
+			return true
+		}
 	}
+	return false
+}
 
+func GetPlaylist(playlistName string) {
+	client := Authenticator.GetClient()
+	userID := Authenticator.GetUserID()
+	var playlistFound bool
 	// Get all playlists for the user
 	playlists, playlistsError := client.GetPlaylistsForUser(context.Background(), userID)
 	if playlistsError != nil {
-		return nil, playlistsError
+		log.Fatal("Could not retrieve user playlists.", playlistsError)
 	}
 
 	// Find the playlist by name
 	for _, playlist := range playlists.Playlists {
-
+		// Checks playlist names and also checks if it's owned by the user
 		if strings.ToLower(playlist.Name) == strings.ToLower(playlistName) && playlist.Owner.ID == userID {
-			// Found the playlist by name
-			return client.GetPlaylist(context.Background(), playlist.ID)
+			var err error
+			userPlaylist, err = client.GetPlaylist(context.Background(), playlist.ID)
+			if err != nil {
+				log.Fatalf("Could not access the playlist: %s", userPlaylist.Name)
+			}
+			playlistFound = true
 		}
 	}
 
-	// Playlist not found
-	return nil, playlistsError
-}
-
-// isClientNull checks if the Spotify client is nil and logs a fatal error if so
-func isClientNull(clientError error) {
-	if clientError != nil {
-		log.Fatal("Client is nil", clientError)
+	if !playlistFound {
+		log.Fatal("Playlist not found")
 	}
 }
