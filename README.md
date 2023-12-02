@@ -9,7 +9,7 @@ Before running the program, ensure you have the following:
 - You must have this link as your Redirect URI: http://localhost:8080/callback
 - Check Web API and Web Playback SDK when creating your spotify app.
 
-## Setup
+## Setup 
 
 - Clone or download the repository
 - Create a .env file in the root directory and add your Spotify client ID and client secret:
