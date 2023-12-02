@@ -4,12 +4,14 @@ This Go program leverages the Spotify API to interact with user playlists. It in
 ## Prerequisites
 Before running the program, ensure you have the following:
 - Go installed on your machine.
+- Have an application that allows you to modify .env files.
 - A Spotify Developer account to obtain your client ID and client secret.
 - You must have this link as your Redirect URI: http://localhost:8080/callback
+- Check Web API and Web Playback SDK when creating your spotify app.
 
 ## Setup
 
-- Clone the repository
+- Clone or download the repository
 - Create a .env file in the root directory and add your Spotify client ID and client secret:
     -  CLIENT_ID = your_spotify_client_id
     -  CLIENT_SECRET = your_spotify_client_secret
