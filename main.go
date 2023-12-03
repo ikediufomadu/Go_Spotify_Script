@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Website the program will get music data from
-	scraper := "https://www.billboard.com/charts/hot-100/"
+	scraper := "https://www.billboard.com/charts/billboard-global-200/"
 
 	// Start local server for Spotify authentication
 	Authenticator.StartLocalServer()

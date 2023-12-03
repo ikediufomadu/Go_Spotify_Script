@@ -12,12 +12,11 @@ import (
 var userPlaylist *spotify.FullPlaylist
 
 // createPlaylist creates a new Spotify playlist for the user
-func CreatePlaylist(playlistName, playlistDescription string, isPublic, isCollaborative bool) {
-	fmt.Println(playlistName, playlistDescription, isPublic, isCollaborative)
+func CreatePlaylist(playlistName string) {
 	client := Authenticator.GetClient()
 	userID := Authenticator.GetUserID()
 
-	_, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, playlistDescription, isPublic, isCollaborative)
+	_, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, "", false, false)
 	if playlistError != nil {
 		fmt.Println("There was a problem creating your playlist.", playlistError)
 	}

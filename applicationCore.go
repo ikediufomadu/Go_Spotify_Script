@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Playlist"
+	"os"
 	"strings"
 )
 
@@ -13,45 +15,32 @@ func programCore() {
 		fmt.Println("Do you want to create a new playlist? (y/n)")
 		var choice string
 		var playlistName string
+		var err error
 		fmt.Scanln(&choice)
+		reader := bufio.NewReader(os.Stdin)
 
 		if strings.ToLower(choice) == "y" {
-			var playlistDescription string
-			var isPublic string
-			var isCollaborative string
-
 			fmt.Println("Enter playlist name")
-			fmt.Scanln(&playlistName)
+			playlistName, err = reader.ReadString('\n')
 
-			fmt.Println("Enter playlist description")
-			fmt.Scanln(&playlistDescription)
-
-			fmt.Println("Do you want playlist to be public? (y/n)")
-			fmt.Scanln(&isPublic)
-
-			if strings.ToLower(isPublic) == "y" {
-				fmt.Println("Do you want playlist to be collaborative (y/n)")
-				fmt.Scanln(&isCollaborative)
-
-				if strings.ToLower(isCollaborative) == "y" {
-					finished = !finished
-					Playlist.CreatePlaylist(playlistName, playlistDescription, true, true)
-					Playlist.SetPlaylist(playlistName)
-				} else if strings.ToLower(isCollaborative) == "n" {
-					finished = !finished
-					Playlist.CreatePlaylist(playlistName, playlistDescription, true, false)
-					Playlist.SetPlaylist(playlistName)
-				} else {
-					fmt.Println("Please enter a valid option")
-				}
-			} else if strings.ToLower(isPublic) == "n" {
-				finished = !finished
-				Playlist.CreatePlaylist(playlistName, playlistDescription, false, false)
-				Playlist.SetPlaylist(playlistName)
+			if err != nil {
+				fmt.Println("Error reading input:", err)
+				return
 			}
+			playlistName = playlistName[:len(playlistName)-1]
+
+			finished = !finished
+			Playlist.CreatePlaylist(playlistName)
+			Playlist.SetPlaylist(playlistName)
+
 		} else if strings.ToLower(choice) == "n" {
 			fmt.Println("Enter the name of the playlist you want to add tracks to")
-			fmt.Scanln(&playlistName)
+			playlistName, err = reader.ReadString('\n')
+			if err != nil {
+				fmt.Println("Error reading input:", err)
+				return
+			}
+			playlistName = playlistName[:len(playlistName)-1]
 			finished = !finished
 			Playlist.GetPlaylist(playlistName)
 		} else {
