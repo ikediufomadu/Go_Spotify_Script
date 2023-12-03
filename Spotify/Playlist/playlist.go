@@ -11,12 +11,13 @@ import (
 
 var userPlaylist *spotify.FullPlaylist
 
-// CreatePlaylist creates a new Spotify playlist for the user
-func CreatePlaylist(playlistName, playlistDescription string, public, collaborative bool) {
+// createPlaylist creates a new Spotify playlist for the user
+func CreatePlaylist(playlistName, playlistDescription string, isPublic, isCollaborative bool) {
+	fmt.Println(playlistName, playlistDescription, isPublic, isCollaborative)
 	client := Authenticator.GetClient()
 	userID := Authenticator.GetUserID()
 
-	_, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, playlistDescription, public, collaborative)
+	_, playlistError := client.CreatePlaylistForUser(context.Background(), userID, playlistName, playlistDescription, isPublic, isCollaborative)
 	if playlistError != nil {
 		fmt.Println("There was a problem creating your playlist.", playlistError)
 	}
@@ -74,4 +75,7 @@ func GetPlaylist(playlistName string) {
 	if !playlistFound {
 		log.Fatal("Playlist not found")
 	}
+}
+func SetPlaylist(playlistName string) {
+	GetPlaylist(playlistName)
 }

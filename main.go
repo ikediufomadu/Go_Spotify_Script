@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/ikediufomadu/Go_Spotify_Script/Handler"
 	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Authenticator"
-	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Playlist"
 )
 
 func main() {
@@ -14,8 +13,11 @@ func main() {
 	Authenticator.StartLocalServer()
 
 	// Put the name of the playlist you want to add tracks to
-	Playlist.GetPlaylist("poo")
+	programCore()
 
 	// Connect to the website to get music data
-	Handler.WebConnector(scraper)
+	if finished {
+		Handler.WebConnector(scraper)
+	}
+
 }
