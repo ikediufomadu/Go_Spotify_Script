@@ -7,8 +7,6 @@ Before running the program, ensure you have the following:
 - Go installed on your machine.
 - Have an application that allows you to modify .env files (notepad, vscode).
 - A Spotify Developer account to obtain your client ID and client secret: https://developer.spotify.com/dashboard
-- You must have this link as your Redirect URI: http://localhost:8080/callback
-- Check Web API and Web Playback SDK when creating your spotify app.
 
 ## Setup 
 
@@ -16,12 +14,14 @@ Before running the program, ensure you have the following:
 - Create a .env file in the root directory and add your Spotify client ID and client secret:
     -  CLIENT_ID = your_spotify_client_id
     -  CLIENT_SECRET = your_spotify_client_secret
+- When creating your bot in Spotify's dashboard add this link for your Redirect URI: http://localhost:8080/callback
+- Check Web API and Web Playback SDK boxes when creating your spotify app. 
 - Define the target website in the main.go file: targetWebsite := "https://example.com".
 - This program works with any billboard endpoint https://www.billboard.com/charts/ except for the billboard artist 100 endpoint.
 ## Usage
 
 1. Spotify User Authentication - The program will then start a local server and output a Spotify authentication URL. Paste the string into your browser to log in to your Spotify account and authorize the program.
-2. Web Scraping - Then it will visit the site to collect music data from.
+2. Web Scraping - Then it will visit one of the billboard endpoints you want and scrap its music data.
 3. Search - It then searches for the track data it collected from the music website of your choice.
 4. Add to Playlist - Finally, it will add the first result to a playlist of your choice then it will stop execution.
 
