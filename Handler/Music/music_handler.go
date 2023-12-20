@@ -1,4 +1,4 @@
-package Handler
+package Music
 
 import (
 	"github.com/ikediufomadu/Go_Spotify_Script/Music"

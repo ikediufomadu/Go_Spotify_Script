@@ -1,4 +1,4 @@
-package Handler
+package Web
 
 import (
 	"fmt"

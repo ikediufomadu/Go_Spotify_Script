@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ikediufomadu/Go_Spotify_Script/Handler"
+	"github.com/ikediufomadu/Go_Spotify_Script/Handler/Web"
 	"github.com/ikediufomadu/Go_Spotify_Script/Spotify/Authenticator"
 )
 
@@ -17,7 +17,7 @@ func main() {
 
 	// Connect to the website to get music data
 	if finished {
-		Handler.WebConnector(scraper)
+		Web.WebConnector(scraper)
 	}
 
 }

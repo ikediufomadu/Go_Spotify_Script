@@ -25,6 +25,13 @@ Before running the program, ensure you have the following:
 3. Search - It then searches for the track data it collected from the music website of your choice.
 4. Add to Playlist - Finally, it will add the first result to a playlist of your choice then it will stop execution.
 
+## Docker
+
+1. You can run this program with docker.
+2. The program is interactive so make sure you use the right flags to create an interactive container, (-it).
+3. Build a docker image with the dockerfile provided, then run the docker image.
+4. This is what the command should look like: docker run -p 5000:8080 -it imagename
+
 ## License
 
 This project is licensed under the MIT License.
